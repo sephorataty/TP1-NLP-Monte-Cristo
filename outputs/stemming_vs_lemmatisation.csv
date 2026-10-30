@@ -1,0 +1,16 @@
+Mot original,Stemming (Snowball),Lemme (SpaCy),POS,Attendu,Stem correct ?,Lemme correct ?
+navire,navir,navire,VERB,navire,non,oui
+prisonnier,prisonni,prisonnier,NOUN,prisonnier,non,oui
+vengeance,vengeanc,vengeance,NOUN,vengeance,non,oui
+chevaux,cheval,cheval,NOUN,cheval,oui,oui
+yeux,yeux,yeux,ADJ,œil,non,non
+allait,allait,aller,VERB,aller,non,oui
+fut,fut,être,AUX,être,non,oui
+meilleurs,meilleur,meilleur,NOUN,bon (ou meilleur),non,non
+aperçut,aperçut,apercevoir,VERB,apercevoir,non,oui
+gendarmes,gendarm,gendarme,NOUN,gendarme,non,oui
+prisonniers,prisonni,prisonnier,NOUN,prisonnier,non,oui
+disait,dis,dire,VERB,dire,non,oui
+émotion,émot,émotion,NOUN,émotion,non,oui
+jeunes,jeun,jeune,ADJ,jeune,non,oui
+dantès,dantes,dantès,PROPN,dantès,non,oui

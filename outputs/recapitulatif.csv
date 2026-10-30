@@ -1,0 +1,12 @@
+Indicateur,Valeur
+Caractères (roman extrait),"727,472"
+Mots (.split),"121,578"
+Tokens NLTK (après nettoyage),"130,542"
+Vocabulaire,"11,142"
+Richesse lexicale (TTR),0.0854
+Hapax,"5,434 (48.8% du vocab.)"
+Pente de Zipf,-1.15
+Tokens après stop words,"50,389 (-61.4%)"
+Réduction vocab. par stemming,47.7%
+Matrice BoW / TF-IDF,20 × 300
+Densité BoW,45.1%
