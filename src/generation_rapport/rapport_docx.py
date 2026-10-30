@@ -1,5 +1,5 @@
 """Remplit le sujet TP1 (.docx) avec les réponses, résultats et figures du notebook.
-Usage : python src/build_rapport.py <sujet.docx> <sortie.docx> [url_github]
+Usage : python -m src.generation_rapport.rapport_docx <sujet.docx> <sortie.docx> [url_github]
 """
 import re
 import sys
@@ -13,7 +13,7 @@ from docx.oxml import OxmlElement
 
 SRC, DST = sys.argv[1], sys.argv[2]
 REPO = sys.argv[3] if len(sys.argv) > 3 else 'https://github.com/sephorataty/TP1-NLP-Monte-Cristo'
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]  # racine du projet
 FIG = ROOT / 'figures'
 
 TXT = RGBColor(0x1F, 0x1F, 0x1F)
@@ -175,7 +175,9 @@ from docx.text.paragraph import Paragraph
 np_ = Paragraph(note_p, info._parent)
 _spacing(np_, before=120, after=60)
 _rich(np_, f'**Rendu — code source complet et exécuté :** {REPO}  '
-           '(notebook `TP1_NLP_Monte_Cristo.ipynb`, figures, données et ce rapport). '
+           '(notebook de démonstration `TP1_NLP_Monte_Cristo.ipynb`, package réutilisable `src/` organisé en '
+           '`utils`, `preprocessing`, `analytics`, `vectorization` et `generation_rapport`, 12 tests unitaires, '
+           'figures, données et ce rapport). '
            'Tous les chiffres ci-dessous proviennent de l\'exécution réelle du notebook sur le Tome I du roman '
            '(Gutenberg #17989), avec Python 3.13, NLTK 3.10, SpaCy 3.8 (fr_core_news_sm) et scikit-learn 1.9.',
       size=9.5, color=ACC)

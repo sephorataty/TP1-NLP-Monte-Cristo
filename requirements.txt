@@ -9,3 +9,5 @@ wordcloud>=1.9
 requests>=2.31
 jupyter
 jupytext
+python-docx
+pytest

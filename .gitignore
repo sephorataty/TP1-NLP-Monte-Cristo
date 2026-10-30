@@ -3,3 +3,7 @@ __pycache__/
 *.pyc
 .DS_Store
 outputs_dump.txt
+nlp_env/
+venv/
+.venv/
+.pytest_cache/

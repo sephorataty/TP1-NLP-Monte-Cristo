@@ -6,11 +6,66 @@ Pipeline NLP complet (prétraitement, représentation et analyse) appliqué au *
 
 | Livrable | Fichier |
 |---|---|
-| Notebook exécuté (code + sorties + graphiques) | [`TP1_NLP_Monte_Cristo.ipynb`](TP1_NLP_Monte_Cristo.ipynb) |
+| Notebook de démonstration exécuté (vitrine) | [`TP1_NLP_Monte_Cristo.ipynb`](TP1_NLP_Monte_Cristo.ipynb) |
+| Package réutilisable | [`src/`](src/) |
 | Rapport avec toutes les réponses (Word / PDF) | [`rapport/TP1_NLP_Master2_IA_Reponses.docx`](rapport/TP1_NLP_Master2_IA_Reponses.docx) · [`.pdf`](rapport/TP1_NLP_Master2_IA_Reponses.pdf) |
-| Code source du notebook (format script) | [`src/tp1_nlp.py`](src/tp1_nlp.py) |
-| Figures | [`figures/`](figures/) |
-| Exports (CSV) | [`outputs/`](outputs/) |
+| Figures · exports CSV | [`figures/`](figures/) · [`outputs/`](outputs/) |
+
+## Architecture du projet
+
+Le code est organisé en **packages réutilisables** : le notebook ne contient que les appels, les affichages
+et les commentaires ; toute la logique est dans `src/` et peut être réutilisée pour analyser un autre corpus.
+
+```
+TP1-NLP-Monte-Cristo/
+├── TP1_NLP_Monte_Cristo.ipynb      # Notebook de démonstration (vitrine), exécuté
+├── README.md
+├── requirements.txt
+├── .gitignore                      # exclut nlp_env/, caches…
+│
+├── src/                            # Package source principal
+│   ├── __init__.py
+│   ├── utils/                      # Données et configuration
+│   │   ├── config.py               #   chemins, URLs Gutenberg, alphabet français
+│   │   ├── corpus_loader.py        #   téléchargement + cache, extraction (regex robuste), chapitres
+│   │   └── plotting.py             #   sauvegarde homogène des figures
+│   ├── preprocessing/              # Nettoyage et normalisation lexicale
+│   │   ├── text_cleaner.py         #   clean_text (sujet), clean_text_v2, clean_text_leger, prep_brut
+│   │   ├── tokenizer.py            #   mots / phrases, n-grammes, comparaison NLTK vs SpaCy
+│   │   ├── stop_words_filter.py    #   stop words NLTK ∪ SpaCy ∪ contextuels, filtrage
+│   │   ├── stemmer.py              #   Snowball, familles de mots, racines thématiques
+│   │   └── lemmatizer.py           #   lemmes, POS, noms propres, stemming vs lemmatisation
+│   ├── analytics/                  # Analyses et visualisations
+│   │   ├── frequency.py            #   top N, loi de Zipf (régression), rangs, hapax
+│   │   ├── characters.py           #   contexte des personnages, mots distinctifs, présence par bloc
+│   │   └── visualization.py        #   barres, Zipf, WordClouds, heatmaps
+│   ├── vectorization/              # Représentations vectorielles
+│   │   ├── documents.py            #   découpage en blocs, repérage des chapitres
+│   │   ├── bow_vectorizer.py       #   matrice Document-Terme (CountVectorizer), densité
+│   │   └── tfidf_vectorizer.py     #   TF-IDF, similarité cosinus, TfidfSearchEngine
+│   └── generation_rapport/
+│       └── rapport_docx.py         #   remplit le sujet .docx avec réponses et figures
+│
+├── tests/test_pipeline.py          # 12 tests unitaires (pytest)
+├── notebook_src/tp1_nlp.py         # source texte du notebook (jupytext)
+├── data/                           # corpus brut + roman extrait (cache)
+├── figures/                        # 12 graphiques générés
+├── outputs/                        # exports CSV
+└── rapport/                        # rapport final .docx / .pdf
+```
+
+Exemple de réutilisation sur un autre texte :
+
+```python
+from src.utils import telecharger_corpus, extraire_roman
+from src.preprocessing import clean_text_v2, tokenize_words, build_custom_stopwords, filter_tokens, load_spacy
+from src.vectorization import decouper_blocs, build_tfidf, TfidfSearchEngine
+
+roman, *_ = extraire_roman(texte_gutenberg)
+blocs, noms = decouper_blocs(clean_text_v2(roman), taille=2000)
+vec, X, df = build_tfidf(blocs, noms, stop_words=build_custom_stopwords(load_spacy()))
+TfidfSearchEngine(vec, X, noms, preprocess=clean_text_v2).search("château prison")
+```
 
 ## Pipeline
 
@@ -50,14 +105,18 @@ Gutenberg → extraction → nettoyage → tokenisation → fréquences / Zipf �
 ## Exécution
 
 ```bash
+python -m venv nlp_env
+source nlp_env/bin/activate            # Windows : nlp_env\Scripts\activate
 pip install -r requirements.txt
 python -m spacy download fr_core_news_sm
-jupyter notebook TP1_NLP_Monte_Cristo.ipynb
+
+jupyter notebook TP1_NLP_Monte_Cristo.ipynb      # le notebook (≈ 30 s d'exécution)
+python -m pytest tests                           # tests unitaires
+python -m src.generation_rapport.rapport_docx sujet.docx rapport/sortie.docx   # rapport Word
 ```
 
-Le corpus est mis en cache dans `data/` (le notebook tente gutenberg.org puis le miroir GitHub du Project Gutenberg si le site est inaccessible). Exécution complète : environ 30 secondes.
-
-Pour régénérer le notebook depuis le script : `jupytext --to ipynb src/tp1_nlp.py -o TP1_NLP_Monte_Cristo.ipynb`.
+Le corpus est mis en cache dans `data/` (le chargeur tente gutenberg.org puis le miroir GitHub du Project Gutenberg).
+Pour régénérer le notebook depuis sa source : `jupytext --to ipynb notebook_src/tp1_nlp.py -o TP1_NLP_Monte_Cristo.ipynb`.
 
 ## Environnement testé
 
